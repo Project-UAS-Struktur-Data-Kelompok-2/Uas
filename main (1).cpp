@@ -10,6 +10,10 @@ void tambahProduk();
 void tampilProduk();
 void editProduk();
 void hapusProduk();
+void initQueue();
+bool isQueueEmpty();
+bool isQueueFull();
+void enqueue();
 void transaksi();
 
 const int MAX_PRODUK = 100;
@@ -31,7 +35,7 @@ int main() {
 }
 
 void header() {
-    cout << " \t\t\t JAYA-JAYA\n\t\t        SUPERMARKET\n";
+    cout << " \t\t\t Point of Sale\n\t\t     SUPERMARKET KElOMPOK 2\n";
     cout << "==============================================================\n";
 }
 
@@ -202,6 +206,46 @@ void hapusProduk() {
     cin.get();
 }
 
+const int MAX_QUEUE = 100;
+struct Queue {
+    produk data[MAX_QUEUE];
+    int front;
+    int rear;
+    int count;
+};
+
+void initQueue(Queue &q) {
+    q.front = 0;
+    q.rear = -1;
+    q.count = 0;
+}
+
+bool isQueueEmpty(Queue &q) {
+    return q.count == 0;
+}
+
+bool isQueueFull(Queue &q) {
+    return q.count == MAX_QUEUE;
+}
+
+void enqueue(Queue &q, produk p) {
+    if (!isQueueFull(q)) {
+        q.rear = (q.rear + 1) % MAX_QUEUE;
+        q.data[q.rear] = p;
+        q.count++;
+    }
+}
+
+produk dequeue(Queue &q) {
+    produk p = {"", 0};
+    if (!isQueueEmpty(q)) {
+        p = q.data[q.front];
+        q.front = (q.front + 1) % MAX_QUEUE;
+        q.count--;
+    }
+    return p;
+}
+
 void transaksi() {
     bersih();
     header();
@@ -225,15 +269,26 @@ void transaksi() {
 
     int total = 0;
     char beliLagi;
+    Queue keranjang;
+    initQueue(keranjang);  // Inisialisasi queue
 
     do {
         int indeks;
+        int jumlah;
         cout << "\nMasukkan nomor produk yang ingin dibeli: ";
         cin >> indeks;
 
         if (indeks > 0 && indeks <= jumlahProduk) {
-            total += daftarProduk[indeks - 1].harga;
-            cout << "Produk " << daftarProduk[indeks - 1].namaProduk << " seharga " << daftarProduk[indeks - 1].harga << " ditambahkan ke keranjang.\n";
+            cout << "Masukkan jumlah produk yang ingin dibeli: ";
+            cin >> jumlah;
+
+            // Menambahkan produk ke dalam keranjang
+            for (int j = 0; j < jumlah; ++j) {
+                enqueue(keranjang, daftarProduk[indeks - 1]);
+            }
+
+            total += daftarProduk[indeks - 1].harga * jumlah;
+            cout << "Produk " << daftarProduk[indeks - 1].namaProduk << " sebanyak " << jumlah << " dengan total harga " << daftarProduk[indeks - 1].harga * jumlah << " ditambahkan ke keranjang.\n";
         } else {
             cout << "Produk tidak ditemukan. Silakan masukkan nomor produk yang valid.\n";
         }
@@ -242,8 +297,14 @@ void transaksi() {
         cin >> beliLagi;
     } while (beliLagi == 'y' || beliLagi == 'Y');
 
+    cout << "\nProduk yang Anda beli:\n";
+    while (!isQueueEmpty(keranjang)) {
+        produk p = dequeue(keranjang);
+        cout << p.namaProduk << " - Harga: " << p.harga << "\n";
+    }
+
     cout << "\nTotal belanjaan: " << total << "\n";
-    cout << "Terima kasih telah berbelanja di JAYA-JAYA SUPERMARKET!\n";
+    cout << "Terima kasih telah berbelanja di SUPERMARKET KELOMPOK 2!\n";
     cout << "\nTekan Enter untuk melanjutkan...";
     cin.ignore();
     cin.get();
