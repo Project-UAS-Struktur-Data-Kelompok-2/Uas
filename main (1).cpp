@@ -151,6 +151,9 @@ void editProduk() {
 
     if (jumlahProduk == 0) {
         cout << "Tidak ada produk yang tersedia.\n";
+        cout << "Tekan ENTER untuk kembali ke menu utama." << endl;
+        cin.ignore();
+        cin.get();
         return;
     }
 
@@ -179,11 +182,14 @@ void hapusProduk() {
     bersih();
     header();
 
-    cout << "||                       EDIT PRODUK                        ||\n";
+    cout << "||                       HAPUS PRODUK                        ||\n";
     cout << "==============================================================\n";
 
     if (jumlahProduk == 0) {
         cout << "Tidak ada produk yang tersedia.\n";
+        cout << "Tekan ENTER untuk kembali ke menu utama." << endl;
+        cin.ignore();
+        cin.get();
         return;
     }
 
@@ -205,6 +211,7 @@ void hapusProduk() {
     cin.ignore();
     cin.get();
 }
+
 
 const int MAX_QUEUE = 100;
 struct Queue {
